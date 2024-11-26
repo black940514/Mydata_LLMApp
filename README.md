@@ -1,4 +1,0 @@
-# LLM_RAG_application
-# Mydata_LLMApp
-# Mydata_LLMApp
-# Mydata_LLMApp

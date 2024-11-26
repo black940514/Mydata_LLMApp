@@ -2,7 +2,8 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder, FewShotChatMessagePromptTemplate
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
-from langchain_upstage import UpstageEmbeddings, ChatUpstage
+from langchain_upstage import ChatUpstage
+from langchain_upstage import UpstageEmbeddings
 from langchain_pinecone import PineconeVectorStore
 
 from langchain_community.chat_message_histories import ChatMessageHistory
@@ -21,8 +22,8 @@ def get_session_history(session_id: str) -> BaseChatMessageHistory:
 
 
 def get_retriever():
-    embedding = UpstageEmbeddings(model='embedding-query')
-    index_name = 'tax-markdown-index'
+    embedding = UpstageEmbeddings(model="embedding-query")
+    index_name = 'mydataindex'
     database = PineconeVectorStore.from_existing_index(index_name=index_name, embedding=embedding)
     retriever = database.as_retriever(search_kwargs={'k': 4})
     return retriever
@@ -59,7 +60,7 @@ def get_llm(model='solar-mini'):
 
 
 def get_dictionary_chain():
-    dictionary = ["사람을 나타내는 표현 -> 거주자"]
+    dictionary = ["금융을 나타내는 표현 -> 마이데이터"]
     llm = get_llm()
     prompt = ChatPromptTemplate.from_template(f"""
         사용자의 질문을 보고, 우리의 사전을 참고해서 사용자의 질문을 변경해주세요.
@@ -88,10 +89,10 @@ def get_rag_chain():
         examples=answer_examples,
     )
     system_prompt = (
-        "당신은 소득세법 전문가입니다. 사용자의 소득세법에 관한 질문에 답변해주세요"
+        "당신은 최고의 마이데이터 전문가입니다. 마이데이터에 관한 질문에 답변해주세요"
         "아래에 제공된 문서를 활용해서 답변해주시고"
         "답변을 알 수 없다면 모른다고 답변해주세요"
-        "답변을 제공할 때는 소득세법 (XX조)에 따르면 이라고 시작하면서 답변해주시고"
+        "답변을 제공할 때는 금융위원회 마이데이터2.0 가이드에 따르면 이라고 시작하면서 답변해주시고"
         "2-3 문장정도의 짧은 내용의 답변을 원합니다"
         "\n\n"
         "{context}"
